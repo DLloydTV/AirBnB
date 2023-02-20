@@ -7,6 +7,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 module.exports = {
   async up (queryInterface, Sequelize) {
+    options.tableName = "Users"
     /**
      * Add altering commands here.
      *
@@ -24,6 +25,7 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
+    options.tableName = "Users"
     /**
      * Add reverting commands here.
      *
