@@ -116,7 +116,7 @@ module.exports = {
         lng: -111.821891,
         name: 'NEW! Spacious Murray Home Near Ski Resorts!',
         description: "Book this spacious Murray home and find yourself amongst the area's best ski resorts! Whether you're traveling in the winter hoping to hit the slopes or in the summer in search of great outdoor recreation, this vacation rental is the perfect place for you. This property is fitted with 4 bedrooms, 2 full bathrooms, a half bath, and a large fenced yard, giving you and your family ample room to relax. Plus, with plenty of dining and shopping in the area, you'll always be entertained!",
-        price: 133,
+        price: 163,
       },
       {
         ownerId: 3,
@@ -161,7 +161,7 @@ module.exports = {
      options.tableName = 'Spots';
      const Op = Sequelize.Op;
      return queryInterface.bulkDelete(options, {
-       username: { [Op.in]: ['Demo-lition', 'FakeUser1', 'FakeUser2'] }
+       price: { [Op.in]: [228, 237, 108, 115, 133, 138, 142, 95, 163, 150, 105, 177] }
      }, {});
   }
 };
