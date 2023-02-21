@@ -31,7 +31,7 @@ module.exports = {
         lat: 34.130588,
         lng: -117.833121,
         name: 'Newly Remodeled Philips Ranch vacation home w Pool',
-        description: "Beautifully remodeled & decorated vacation home. Featuring outdoor pool and spacious outdoor dining area. Multiple lounging areas with 4 bedrooms, 3 full bathrooms and functional working spaces. Peaceful neighborhood, surrounded by local shops and restaurants. Only 12 miles from Ontario International Airport and convention center. 21 miles from Disneyland. 9 miles from Chino Hills state park with lots of hiking trails. 2000sqft of living space provides plenty of space for the whole family.",
+        description: "Beautifully remodeled & decorated vacation home. Featuring outdoor pool and spacious outdoor dining area.",
         price: 237,
       },
       {
@@ -43,7 +43,7 @@ module.exports = {
         lat: 39.126742,
         lng: -76.93465,
         name: 'Location, Location, Location - US Capitol & more',
-        description: "Enjoy our sunny basement apartment a few blocks from the Capitol. Our renovated English basement is spacious, bright and clean. It has a private entrance, queen bed, large couch, kitchen, washer, dryer, TV... It is ideal for a couple but can accommodate a third, ideally a child.",
+        description: "Enjoy our sunny basement apartment a few blocks from the Capitol. Our renovated English basement is spacious, bright and clean.",
         price: 108,
       },
       {
@@ -55,7 +55,7 @@ module.exports = {
         lat: 37.275588,
         lng: -124.337121,
         name: 'Spacious H Street Corridor English Basement',
-        description: "Just steps from bustling H Street, with numerous restaurants, bars, and a Whole Foods supermarket, you can enjoy a stylish experience with easy access to food, culture, and the community of our neighborhood. Our lower level apartment has ample room for a comfortable, modern stay, with many amenities.",
+        description: "Just steps from bustling H Street, with numerous restaurants, bars, and a Whole Foods supermarket, you can enjoy a stylish experience with easy access to food, culture, and the community of our neighborhood.",
         price: 115,
       },
       {
@@ -67,7 +67,7 @@ module.exports = {
         lat: 26.533332,
         lng: -80.058462,
         name: 'Hear the Ocean waves in Adorable Beachside Condo',
-        description: "Arrive and unwind at this Stunning Oceanfront condo. Please note because of the Hurricane Ian and Nicole all pools indoor and outdoor including hot tubs are closed until spring. Located only 2 miles from downtown Daytona Beach boardwalk and shops. Other nearby destinations include: Daytona International Speedway and 1 hour from Disney World. The space is cleaned by trusted professionals after every guest.",
+        description: "Arrive and unwind at this Stunning Oceanfront condo. Located only 2 miles from downtown Daytona Beach boardwalk and shops.",
         price: 133,
       },
       {
@@ -91,7 +91,7 @@ module.exports = {
         lat: 37.504709,
         lng: -121.982637,
         name: 'Lovely entire house in SJFree, parking, /Wi-Fi',
-        description: "Updated 2 bedrooms, 2 bathrooms house. Free driveway parking and on street, safe & quiet. A beautiful kitchen, an island with sink, dishwasher, microwave, gas cooking range, big refrigerator, AC, Heather, washer/dryer. Free wifi 400Mbps, TV cable 125+ channels.",
+        description: "Updated 2 bedrooms, 2 bathrooms house. Free driveway parking and on street, safe & quiet.",
         price: 142,
       },
       {
@@ -115,7 +115,7 @@ module.exports = {
         lat: 40.734346,
         lng: -111.821891,
         name: 'NEW! Spacious Murray Home Near Ski Resorts!',
-        description: "Book this spacious Murray home and find yourself amongst the area's best ski resorts! Whether you're traveling in the winter hoping to hit the slopes or in the summer in search of great outdoor recreation, this vacation rental is the perfect place for you. This property is fitted with 4 bedrooms, 2 full bathrooms, a half bath, and a large fenced yard, giving you and your family ample room to relax. Plus, with plenty of dining and shopping in the area, you'll always be entertained!",
+        description: "Book this spacious Murray home and find yourself amongst the area's best ski resorts!",
         price: 163,
       },
       {
@@ -127,7 +127,7 @@ module.exports = {
         lat: 35.606976,
         lng: -96.429085,
         name: 'Welcome to Sycamore Hill a quiet relaxing retreat',
-        description: "Book this spacious Murray home and find yourself amongst the area's best ski resorts! Whether you're traveling in the winter hoping to hit the slopes or in the summer in search of great outdoor recreation, this vacation rental is the perfect place for you. This property is fitted with 4 bedrooms, 2 full bathrooms, a half bath, and a large fenced yard, giving you and your family ample room to relax. Plus, with plenty of dining and shopping in the area, you'll always be entertained!",
+        description: "This property is fitted with 2 full bathrooms, a half bath, and a large fenced yard, giving you and your family ample room to relax.",
         price: 150,
       },
       {
@@ -139,7 +139,7 @@ module.exports = {
         lat: 33.793724,
         lng: -84.412549,
         name: 'Atlanta Great Location',
-        description: "Get ready to Make yourself at home in our Beautiful newly renovated ranch style home in highly sought after Gresham Park area. Our place features 3 bedrooms with 2 full baths a Dream Kitchen with all new stainless steel appliances, tiled backsplash, Quartz counter tops, an amazing open floor plan, as well as a 10 ft deck.",
+        description: "Get ready to Make yourself at home in our Beautiful newly renovated ranch style home in highly sought after Gresham Park area.",
         price: 105,
       },
       {
@@ -151,7 +151,7 @@ module.exports = {
         lat: 41.659206,
         lng: -87.518363,
         name: '52nd Floor MagMile Penthouse Views Fireplace Pool',
-        description: "This Penthouse unit is a magnificent unique rental in Chicago. Towering above the city, with floor to ceiling window in with a the spacious open floor plan living areas and exquisite fireplace, this Penthouse gives you the ultimate in city living. It's all about the views and location. The city unfolds before 52 floors above a Lake Michigan backdrop; nowhere in Chicago can you stay with views like theses special place is close to everything, making it easy to plan your visit.",
+        description: "This Penthouse unit is a magnificent unique rental in Chicago.",
         price: 177,
       },
       ])
