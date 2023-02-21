@@ -90,7 +90,7 @@ module.exports = {
         country: 'USA',
         lat: 37.504709,
         lng: -121.982637,
-        name: 'Lovely entire house in SJFree, parking, laundry/Wi-Fi',
+        name: 'Lovely entire house in SJFree, parking, /Wi-Fi',
         description: "Updated 2 bedrooms, 2 bathrooms house. Free driveway parking and on street, safe & quiet. A beautiful kitchen, an island with sink, dishwasher, microwave, gas cooking range, big refrigerator, AC, Heather, washer/dryer. Free wifi 400Mbps, TV cable 125+ channels.",
         price: 142,
       },
