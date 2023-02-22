@@ -8,18 +8,121 @@ const { check } = require('express-validator');
 
 const sequelize = require('sequelize');
 const { Op } = require('sequelize');
-const { validateSpot } = require('../../utils/validation');
+const { validateSpot, handleValidationErrors } = require('../../utils/validation');
+
+// const { ifSpotExists } = require('../../utils/error-handlers.js')
+// const ifSpotExists = require("../../utils/error-handlers.js")
+
+// Validation Imports
+// const { validateSpot } = require('../../utils/validation');
 
 // GET All Spots
 router.get('/', async (req, res) => {
-    let spots = await Spot.findAll()
+    let spotsArr = [];
+    // Query to add Reviews and Spot Images to Spot object
+    const query = {
+        where: {},
+        include: [
+            {
+                model: Review,
+                attributes: ['stars']
+            },
+            {
+                model: SpotImage,
+                attributes: ['url', 'preview']
+            }
+        ],
+    }
 
-    res.json(spots)
+    let spots = await Spot.findAll(query)
+
+    // Adding Avg Review Score and preview Image to Spot
+    spots.forEach(spot => {
+        let eachSpot = spot.toJSON();
+
+        let count = spot.Reviews.length;
+        let sum = 0;
+        spot.Reviews.forEach((review) => sum += review.stars)
+        let avg = sum / count;
+        if (!avg) {
+            avg = "No current ratings"
+        };
+
+        eachSpot.avgRating = avg;
+
+        if (eachSpot.SpotImages.length > 0) {
+            for (let i = 0; i < eachSpot.SpotImages.length; i++) {
+                if (eachSpot.SpotImages[i].preview === true) {
+                    eachSpot.previewImage = eachSpot.SpotImages[i].url;
+                }
+            }
+        }
+
+        // If No Preview Image, Spot Review, or Spot Images Exists
+        if (!eachSpot.previewImage) {
+            eachSpot.previewImage = "No preview image available";
+        }
+
+        if (!eachSpot.Reviews.length > 0) {
+            eachSpot.Reviews = "This Spot has no reviews"
+        }
+
+        if (!eachSpot.SpotImages.length > 0) {
+            eachSpot.SpotImages = "This Spot has no images"
+        }
+
+        delete eachSpot.Reviews;
+        delete eachSpot.SpotImages;
+        spotsArr.push(eachSpot);
+    })
+    
+   return res.json(spotsArr)
 })
 
 // GET Spot By Id
-router.get('/:id', async (req, res) => {
+router.get('/:spotId', async (req, res, next) => {
+    let { spotId } = req.params;
+    let spot = await Spot.findByPk(spotId)
 
+    spot = spot.toJSON()
+
+    // Add Review Count
+    let count = await Review.count({
+        where: {
+            spotId: spotId
+        }
+    });
+
+    spot.numReviews = count
+
+    // Add AVG Review Rating
+    let sum = await Review.sum('stars', {
+        where: {
+            spotId: spotId
+        }
+    });
+
+    if (count >= 1) {
+        spot.avgStarRating = sum / count
+    } else {
+        spot.avgStarRating = "No current ratings"
+    };
+
+    // Add Spot Images
+    let spotImages = await SpotImage.findAll({
+        where: {
+            spotId: spotId
+        },
+        attributes: ['id', 'url', 'preview']
+    });
+
+    if (spotImages.length >= 1) {
+        spot.SpotImages = spotImages
+    } else {
+        spot.SpotImages = "No images available"
+    };
+
+    return res.json(spot)
 })
 
 // CREATE A Spot
