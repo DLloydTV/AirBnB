@@ -19,6 +19,33 @@ const handleValidationErrors = (req, _res, next) => {
     next();
   };
 
+  // Validate Signup
+  const validateSignup = [
+    check('email')
+        .exists({ checkFalsy: true })
+        .isEmail()
+        .withMessage('Please provide a valid email.'),
+    check('username')
+        .exists({ checkFalsy: true })
+        .isLength({ min: 4 })
+        .withMessage('Please provide a username with at least 4 characters.'),
+    check('username')
+        .not()
+        .isEmail()
+        .withMessage('Username cannot be an email.'),
+    check('password')
+        .exists({ checkFalsy: true })
+        .isLength({ min: 6 })
+        .withMessage('Password must be 6 characters or more.'),
+    check('firstName')
+        .exists({ checkFalsey: true })
+        .withMessage('Must provide a firstName'),
+    check('lastName')
+        .exists({ checkFalsey: true })
+        .withMessage('Must provide a lastName'),
+    handleValidationErrors
+];
+
   // Validate Spot
   const validateSpot = [
     check('address')
@@ -55,8 +82,21 @@ const handleValidationErrors = (req, _res, next) => {
       .withMessage('Price per day is required'),
     handleValidationErrors
 ];
+
+// Validate Spot Images
+const validateSpotImage = [
+  check('url')
+    .notEmpty()
+    .withMessage('url must be valid'),
+    check('preview')
+    .notEmpty()
+    .isBoolean()
+    .withMessage('preview must be a boolean'),
+    handleValidationErrors
+]
   
   module.exports = {
     handleValidationErrors,
-    validateSpot
+    validateSpot,
+    validateSpotImage
   };
