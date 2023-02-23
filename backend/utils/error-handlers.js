@@ -1,7 +1,7 @@
 const sequelize = require('sequelize');
 const express = require('express');
 const router = express.Router();
-const { Booking, Review, ReviewImage, Spot, SpotImage, User } = require('../../db/models');
+const { User, Spot, Review, SpotImage, ReviewImage, Booking } = require('../db/models');
 
 // Check If Spot Exists
 const ifSpotExists = async (req, res, next) => {
@@ -22,4 +22,6 @@ const ifSpotExists = async (req, res, next) => {
 
 
 
-module.exports = ifSpotExists;
+module.exports = {
+    ifSpotExists,
+}
