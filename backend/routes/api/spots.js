@@ -7,11 +7,13 @@ const { Booking, Review, ReviewImage, Spot, SpotImage, User } = require('../../d
 const { check } = require('express-validator');
 
 const sequelize = require('sequelize');
-const { Op } = require('sequelize');
-const { validateSpot, handleValidationErrors } = require('../../utils/validation');
+const { Op, json } = require('sequelize');
+const { validateSpot, handleValidationErrors, validateSpotImage } = require('../../utils/validation');
 
-// const { ifSpotExists } = require('../../utils/error-handlers.js')
-// const ifSpotExists = require("../../utils/error-handlers.js")
+const { checkIfSpotExists, checkIfUsersSpot } = require('../../utils/error-handlers')
+
+// const { checkIfSpotExists } = require('../../utils/error-handlers.js')
+// const checkIfSpotExists = require("../../utils/error-handlers.js")
 
 // Validation Imports
 // const { validateSpot } = require('../../utils/validation');
@@ -77,10 +79,78 @@ router.get('/', async (req, res) => {
     })
     
    return res.json(spotsArr)
-})
+});
+
+// Get all Spots owned by Current User
+router.get('/current', requireAuth, async (req, res, next) => {
+    let user = req.user;
+
+    let spots = await user.getSpots({
+        include: [
+            {
+                model: Review,
+                attributes: ['stars']
+            },
+            {
+                model: SpotImage,
+                attributes: ['url', 'preview']
+            }
+        ]
+    })
+
+    console.log(user)
+    let spotsOwned = [];
+
+    spots.forEach(spot => {
+        let eachSpot = spot.toJSON();
+
+        let count = spot.Reviews.length;
+        let sum = 0;
+        spot.Reviews.forEach((review) => sum += review.stars)
+        let avg = sum / count;
+        if (!avg) {
+            avg = "No current ratings"
+        };
+
+        eachSpot.avgRating = avg;
+
+        if (eachSpot.SpotImages.length > 0) {
+            for (let i = 0; i < eachSpot.SpotImages.length; i++) {
+                if (eachSpot.SpotImages[i].preview === true) {
+                    eachSpot.previewImage = eachSpot.SpotImages[i].url;
+                }
+            }
+        }
+
+        if (!eachSpot.previewImage) {
+            eachSpot.previewImage = "No preview image available";
+        }
+
+        if (!eachSpot.Reviews.length > 0) {
+            eachSpot.Reviews = "No current reviews"
+        }
+
+        if (!eachSpot.SpotImages.length > 0) {
+            eachSpot.SpotImages = "No current SpotImages"
+        }
+
+        delete eachSpot.SpotImages;
+        delete eachSpot.Reviews;
+        spotsOwned.push(eachSpot);
+    })
+
+
+    if (spotsOwned.length === 0) {
+        res.json("Sorry, you don't own any spots")
+    }
+
+   return res.json({
+        Spots: spotsOwned
+    })
+});
 
 // GET Spot By Id
-router.get('/:spotId', async (req, res, next) => {
+router.get('/:spotId', checkIfSpotExists, async (req, res, next) => {
     let { spotId } = req.params;
     let spot = await Spot.findByPk(spotId)
 
@@ -123,7 +193,17 @@ router.get('/:spotId', async (req, res, next) => {
     };
 
     return res.json(spot)
-})
+});
+
+// Testing User
+// router.get('/current', async (req, res, next) => {
+//     let user = req.users
+
+//     console.log(user)
+
+//     res.json(user)
+// })
+
 
 // CREATE A Spot
 router.post('/', requireAuth, validateSpot, async (req, res) => {
@@ -145,8 +225,66 @@ router.post('/', requireAuth, validateSpot, async (req, res) => {
     })
 
     return res.status(201).json(newSpot)
+});
 
-})
+// Add an Image to a Spot based on the Spot's id
+router.post('/:spotId/images', requireAuth, checkIfSpotExists, checkIfUsersSpot, validateSpotImage, async (req, res, next) => {
+    let { spotId } = req.params;
+    let { url, preview } = req.body;
+
+    const user = req.user;
+
+    const spot = await Spot.findByPk(spotId);
+
+    let spotImage = await spot.createSpotImage({
+        url: url,
+        preview: preview
+    });
+
+    return res.json({
+        id: spotImage.id,
+        url: spotImage.url,
+        preview: spotImage.preview
+    });
+});
+
+// Edit a Spot
+router.put('/:spotId', requireAuth, checkIfSpotExists, checkIfUsersSpot, validateSpot, async (req, res, next) => {
+    const { spotId } = req.params;
+    const { address, city, state, country, lat, lng, name, description, price } = req.body;
+
+    const user = req.user;
+    const spot = await Spot.findByPk(spotId);
+
+    spot.address = address;
+    spot.city = city;
+    spot.state = state;
+    spot.country = country;
+    spot.lat = lat;
+    spot.lng = lng;
+    spot.name = name;
+    spot.description = description;
+    spot.price = price;
+
+    await spot.save();
+
+    return res.json(spot);
+});
+
+// Delete a Spot
+router.delete('/:spotId', requireAuth, checkIfSpotExists, checkIfUsersSpot, async (req, res, next) => {
+    const { spotId } = req.params;
+
+    const user = req.user;
+    const spot = await Spot.findByPk(spotId);
+
+    spot.destroy();
+    
+    return res.json({
+        message: "Successfully deleted",
+        statusCode: 200
+    });
+});
 
 
 module.exports = router;

@@ -1,10 +1,10 @@
 const sequelize = require('sequelize');
 const express = require('express');
 const router = express.Router();
-const { Booking, Review, ReviewImage, Spot, SpotImage, User } = require('../../db/models');
+const { User, Spot, Review, SpotImage, ReviewImage, Booking } = require('../db/models');
 
 // Check If Spot Exists
-const ifSpotExists = async (req, res, next) => {
+const checkIfSpotExists = async (req, res, next) => {
     let spot = await Spot.findByPk(req.params.spotId);
 
     if (!spot) {
@@ -19,7 +19,26 @@ const ifSpotExists = async (req, res, next) => {
     return next();
 };
 
+// Check If Spot Belongs To User
+const checkIfUsersSpot = async (req, res, next) => {
+    let { spotId } = req.params;
+    const user = req.user;
+    const spot = await Spot.findByPk(spotId);
+
+    if (user.id !== spot.ownerId) {
+        const err = {};
+        err.title = "Authorization error";
+        err.status = 403;
+        err.message = "spot doesn't belong to current user";
+        return next(err);
+    }
+    return next()
+}
 
 
 
-module.exports = ifSpotExists;
+
+module.exports = {
+    checkIfSpotExists,
+    checkIfUsersSpot
+}
