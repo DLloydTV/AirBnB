@@ -123,8 +123,74 @@ router.get('/:spotId', async (req, res, next) => {
     };
 
     return res.json(spot)
-})
+});
 
+// Get all Spots owned by Current User
+// router.get('/current', requireAuth, async (req, res, next) => {
+//     let user = req.user;
+
+//     let spots = await user.getSpots({
+//         include: [
+//             {
+//                 model: Review,
+//                 attributes: ['stars']
+//             },
+//             {
+//                 model: SpotImage,
+//                 attributes: ['url', 'preview']
+//             }
+//         ]
+//     })
+
+//     let ownedSpots = [];
+
+//     spots.forEach(spot => {
+//         let eachSpot = spot.toJSON();
+
+//         let count = spot.Reviews.length;
+//         let sum = 0;
+//         spot.Reviews.forEach((review) => sum += review.stars)
+//         let avg = sum / count;
+//         if (!avg) {
+//             avg = "No current ratings"
+//         };
+
+//         eachSpot.avgRating = avg;
+
+//         if (eachSpot.SpotImages.length > 0) {
+//             for (let i = 0; i < eachSpot.SpotImages.length; i++) {
+//                 if (eachSpot.SpotImages[i].preview === true) {
+//                     eachSpot.previewImage = eachSpot.SpotImages[i].url;
+//                 }
+//             }
+//         }
+
+//         if (!eachSpot.previewImage) {
+//             eachSpot.previewImage = "No preview image available";
+//         }
+
+//         if (!eachSpot.Reviews.length > 0) {
+//             eachSpot.Reviews = "No current reviews"
+//         }
+
+//         if (!eachSpot.SpotImages.length > 0) {
+//             eachSpot.SpotImages = "No current SpotImages"
+//         }
+
+//         delete eachSpot.SpotImages;
+//         delete eachSpot.Reviews;
+//         ownedSpots.push(eachSpot);
+//     })
+
+
+//     if (ownedSpots.length === 0) {
+//         res.json("Sorry, you don't own any spots")
+//     }
+
+//    return res.json({
+//         Spots: ownedSpots
+//     })
+// })
 // CREATE A Spot
 router.post('/', requireAuth, validateSpot, async (req, res) => {
     const { address, city, state, country, lat, lng, name, description, price } = req.body;
