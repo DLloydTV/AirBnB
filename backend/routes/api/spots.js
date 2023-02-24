@@ -8,7 +8,7 @@ const { check } = require('express-validator');
 
 const sequelize = require('sequelize');
 const { Op, json } = require('sequelize');
-const { validateSpot, handleValidationErrors, validateSpotImage } = require('../../utils/validation');
+const { validateSpot, handleValidationErrors, validateSpotImage, validateReview } = require('../../utils/validation');
 
 const { checkIfSpotExists, checkIfUsersSpot } = require('../../utils/error-handlers')
 
@@ -285,6 +285,78 @@ router.delete('/:spotId', requireAuth, checkIfSpotExists, checkIfUsersSpot, asyn
         statusCode: 200
     });
 });
+
+// Get all Reviews by Spot's id
+router.get('/:spotId/reviews', checkIfSpotExists, async (req, res, next) => {
+    const { spotId } = req.params;
+
+    const spot = await Spot.findByPk(spotId);
+
+    const reviews = await spot.getReviews({
+        include: [
+            {
+                model: User,
+                attributes: ['id', 'firstName', 'lastName']
+            },
+            {
+                model: ReviewImage,
+                attributes: ['id', 'url']
+            }
+        ]
+    });
+
+    let reviewsArr = [];
+    reviews.forEach(review => {
+        let eachReview = review.toJSON();
+
+        if (!eachReview.ReviewImages.length > 0) {
+            eachReview.ReviewImages = "No review images available"
+        }
+
+        reviewsArr.push(eachReview);
+    })
+
+    if(!reviewsArr.length) {
+        return res.json("No reviews for this spot")
+    };
+
+    return res.json({
+        Reviews: reviewsArr
+    });
+});
+
+// Create a Review for a Spot based on the Spot's id
+router.post('/:spotId/reviews', requireAuth, checkIfSpotExists, validateReview, async (req, res, next) => {
+    const { spotId } = req.params;
+    const { review, stars} = req.body;
+
+    const user = req.user;
+    const spot = await Spot.findByPk(spotId);
+
+    let existingReview = await Review.findOne({
+        where: {
+            spotId: spotId,
+            userId: user.id
+        }
+    });
+
+    if (existingReview) {
+        const err = {};
+        err.title = "Review from user already exists for this spot";
+        err.status = 403;
+        err.message = "You already left a review for this spot";
+        return next(err)
+    };
+
+    const newReview = await spot.createReview({
+        userId: user.id,
+        review: review,
+        stars: stars
+    });
+
+    return res.status(201).json(newReview)
+
+})
 
 
 module.exports = router;

@@ -33,6 +33,38 @@ const checkIfUsersSpot = async (req, res, next) => {
         return next(err);
     }
     return next()
+};
+
+// Check If Review Belongs To User
+const checkIfUsersReview = async (req, res, next) => {
+    let { reviewId } = req.params;
+    const user = req.user;
+    const review = await Review.findByPk(reviewId);
+
+    if (review.userId !== user.id) {
+        const err = {};
+        err.title = "Authorization error";
+        err.status = 403;
+        err.message = "Review doesn't belong to current user";
+        return next(err);
+    }
+    return next()
+};
+
+// Check if Review exists
+const checkIfReviewExists = async (req, res, next) => {
+    const { reviewId } = req.params;
+    const user = req.user;
+    const review = await Review.findByPk(reviewId);
+
+    if (!review) {
+        const err = {};
+        err.title = "Couldn't find a Review with the specified id";
+        err.message = "Review couldn't be found";
+        err.status = 404;
+        return next(err);
+    }
+    return next()
 }
 
 
@@ -40,5 +72,7 @@ const checkIfUsersSpot = async (req, res, next) => {
 
 module.exports = {
     checkIfSpotExists,
-    checkIfUsersSpot
+    checkIfUsersSpot,
+    checkIfUsersReview,
+    checkIfReviewExists
 }

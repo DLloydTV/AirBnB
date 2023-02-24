@@ -83,7 +83,7 @@ const handleValidationErrors = (req, _res, next) => {
     handleValidationErrors
 ];
 
-// Validate Spot Images
+// Validate Spot Image
 const validateSpotImage = [
   check('url')
     .notEmpty()
@@ -93,10 +93,32 @@ const validateSpotImage = [
     .isBoolean()
     .withMessage('preview must be a boolean'),
     handleValidationErrors
+];
+
+// Validate Review
+const validateReview = [
+  check('review')
+    .notEmpty()
+    .withMessage('Review text is required'),
+  check('stars')
+    .notEmpty()
+    .isInt({ min: 1, max: 5 })
+    .withMessage('Stars must be an integer from 1 to 5'),
+  handleValidationErrors
+];
+
+// Validate Review Image
+const validateReviewImage = [
+  check('url')
+    .notEmpty()
+    .withMessage('url is not valid'),
+  handleValidationErrors
 ]
   
   module.exports = {
     handleValidationErrors,
     validateSpot,
-    validateSpotImage
+    validateSpotImage,
+    validateReview,
+    validateReviewImage
   };
