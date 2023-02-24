@@ -113,12 +113,26 @@ const validateReviewImage = [
     .notEmpty()
     .withMessage('url is not valid'),
   handleValidationErrors
-]
+];
+
+// Validate Booking
+const validateBooking = [
+  check('startDate')
+    .notEmpty()
+    .isDate()
+    .withMessage('Start date must be a date'),
+  check('endDate')
+    .notEmpty()
+    .isDate()
+    .withMessage('End date cannot be on or before Start date'),
+  handleValidationErrors
+];
   
   module.exports = {
     handleValidationErrors,
     validateSpot,
     validateSpotImage,
     validateReview,
-    validateReviewImage
+    validateReviewImage,
+    validateBooking
   };
