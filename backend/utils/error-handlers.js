@@ -60,11 +60,34 @@ const checkIfReviewExists = async (req, res, next) => {
     if (!review) {
         const err = {};
         err.title = "Couldn't find a Review with the specified id";
-        err.message = "Review couldn't be found";
         err.status = 404;
+        err.message = "Review couldn't be found";
         return next(err);
     }
     return next()
+};
+
+// Check if Booking Exists
+const checkIfBookingExists = async (req, res, next) => {
+    const { bookingId }= req.params;
+    let booking = await Booking.findByPk(bookingId);
+
+    if (!booking) {
+        const err = {};
+        err.title = "Couldn't find a booking with the specified id";
+        err.status = 404;
+        err.message = "Booking couldn't be found";
+        return next(err);
+    }
+    return next()
+};
+
+// Convert Date
+const convertDate = (date) => {
+    const [year, month, day] = date.split("-");
+    const monthIndex = month -1;
+    const newDate = newDate(year, monthIndex, date);
+    return date;
 }
 
 
@@ -74,5 +97,7 @@ module.exports = {
     checkIfSpotExists,
     checkIfUsersSpot,
     checkIfUsersReview,
-    checkIfReviewExists
+    checkIfReviewExists,
+    checkIfBookingExists,
+    convertDate
 }
