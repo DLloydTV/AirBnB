@@ -127,6 +127,42 @@ const validateBooking = [
     .withMessage('End date cannot be on or before Start date'),
   handleValidationErrors
 ];
+
+const validateQuery = [
+  check("page")
+      .optional({ nullable: true })
+      .isInt({ min: 1 })
+      .withMessage("Page must be greater than or equal to 1"),
+  check("size")
+      .optional({ nullable: true })
+      .isInt({ min: 1 })
+      .withMessage("Size must be greater than or equal to 1"),
+  check("maxLat")
+      .optional({ nullable: true })
+      .isDecimal()
+      .withMessage("Maximum latitude is invalid"),
+  check("minLat")
+      .optional({ nullable: true })
+      .isDecimal()
+      .withMessage("Minimum latitude is invalid"),
+  check("maxLng")
+      .optional({ nullable: true })
+      .isDecimal()
+      .withMessage("Maximum longitude is invalid"),
+  check("minLng")
+      .optional({ nullable: true })
+      .isDecimal()
+      .withMessage("Minimum longitude is invalid"),
+  check("minPrice")
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage("Minimum price must be greater or equal to 0"),
+  check("maxPrice")
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage("Maximum price must be greater or equal to 0"),
+  handleValidationErrors
+];
   
   module.exports = {
     handleValidationErrors,
@@ -134,5 +170,6 @@ const validateBooking = [
     validateSpotImage,
     validateReview,
     validateReviewImage,
-    validateBooking
+    validateBooking,
+    validateQuery
   };

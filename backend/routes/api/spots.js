@@ -8,7 +8,7 @@ const { check } = require('express-validator');
 
 const sequelize = require('sequelize');
 const { Op, json } = require('sequelize');
-const { validateSpot, handleValidationErrors, validateSpotImage, validateReview, validateBooking } = require('../../utils/validation');
+const { validateSpot, handleValidationErrors, validateSpotImage, validateReview, validateBooking, validateQuery } = require('../../utils/validation');
 
 const { checkIfSpotExists, checkIfUsersSpot, convertDate } = require('../../utils/error-handlers')
 
@@ -19,8 +19,25 @@ const { checkIfSpotExists, checkIfUsersSpot, convertDate } = require('../../util
 // const { validateSpot } = require('../../utils/validation');
 
 // GET All Spots
-router.get('/', async (req, res) => {
+router.get('/', validateQuery, async (req, res) => {
+    let { page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice } = req.query;
     let spotsArr = [];
+
+
+    page = Number(page);
+    size = Number(size);
+
+    if (!page) page = 1;
+    if (!size) size = 20;
+    if (page > 10) page = 10;
+    if (size > 10) size = 20;
+
+    let pagination = {}
+    if (parseInt(page) >= 1 && parseInt(size) >= 1) {
+        pagination.limit = size;
+        pagination.offset = size * (page - 1);
+    }
+
     // Query to add Reviews and Spot Images to Spot object
     const query = {
         where: {},
@@ -34,7 +51,76 @@ router.get('/', async (req, res) => {
                 attributes: ['url', 'preview']
             }
         ],
+        ...pagination
     }
+
+    // Min & Max Latitude Query
+    if (maxLat && !minLat) {
+        query.where.lat = {
+            [Op.lte]: maxLat
+        }
+    };
+
+    if (!maxLat && minLat) {
+        query.where.lat = {
+            [Op.gte]: minLat
+        }
+    };
+
+    if (maxLat && minLat) {
+        query.where.lat = {
+            [Op.and]: {
+                [Op.lte]: maxLat,
+                [Op.gte]: minLat
+            }
+        }
+    };
+
+
+    // Min & Max Longitude Query
+    if (maxLng && !minLng) {
+        query.where.lng = {
+            [Op.lte]: maxLng
+        }
+    };
+
+    if (!maxLng && minLng) {
+        query.where.lng = {
+            [Op.gte]: minLng
+        }
+    };
+
+    if (maxLng && minLng) {
+        query.where.lng = {
+            [Op.and]: {
+                [Op.lte]: maxLng,
+                [Op.gte]: minLng
+            }
+        }
+    };
+
+
+    // Min & Max Price Query
+    if (maxPrice && !minPrice) {
+        query.where.price = {
+            [Op.lte]: maxPrice
+        }
+    };
+
+    if (!maxPrice && minPrice) {
+        query.where.price = {
+            [Op.gte]: minPrice
+        }
+    };
+
+    if (maxPrice && minPrice) {
+        query.where.price = {
+            [Op.and]: {
+                [Op.lte]: maxPrice,
+                [Op.gte]: minPrice
+            }
+        }
+    };
 
     let spots = await Spot.findAll(query)
 
@@ -98,7 +184,6 @@ router.get('/current', requireAuth, async (req, res, next) => {
         ]
     })
 
-    console.log(user)
     let spotsOwned = [];
 
     spots.forEach(spot => {
