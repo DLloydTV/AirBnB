@@ -13,7 +13,7 @@ const { validateSpot, handleValidationErrors, validateSpotImage, validateReview,
 const { checkIfSpotExists, checkIfUsersSpot, checkIfReviewExists, checkIfUsersReview, checkIfBookingExists, convertDate } = require('../../utils/error-handlers');
 
 // Get all of the Current User's Bookings
-router.get('/:current', requireAuth, async (req, res, next) => {
+router.get('/current', requireAuth, async (req, res, next) => {
     const user = req.user;
 
     const bookings = await user.getBookings({
