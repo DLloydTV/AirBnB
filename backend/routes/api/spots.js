@@ -10,7 +10,7 @@ const sequelize = require('sequelize');
 const { Op, json } = require('sequelize');
 const { validateSpot, handleValidationErrors, validateSpotImage, validateReview, validateBooking, validateQuery } = require('../../utils/validation');
 
-const { checkIfSpotExists, checkIfUsersSpot, convertDate } = require('../../utils/error-handlers')
+const { checkIfSpotExists, checkIfUsersSpot } = require('../../utils/error-handlers')
 
 // const { checkIfSpotExists } = require('../../utils/error-handlers.js')
 // const checkIfSpotExists = require("../../utils/error-handlers.js")
@@ -497,32 +497,36 @@ router.get('/:spotId/bookings', requireAuth, checkIfSpotExists, async (req, res,
 router.post('/:spotId/bookings', requireAuth, checkIfSpotExists, validateBooking, async (req, res, next) => {
     const { spotId } = req.params;
     const user = req.user;
-
     let { startDate, endDate } = req.body;
 
-    startDate = convertDate(startDate);
-    endDate = convertDate(endDate);
+    startDate = new Date(startDate);
+    endDate = new Date(endDate)
+
 
     const spot = await Spot.findByPk(spotId);
 
-    const err = {};
+    const err = {}
+
+    console.log(startDate)
 
     if (startDate <= new Date()) {
         err.title = "Can't make a booking in the past";
-        err.status = 403;
+        err.statusCode = 403;
         err.message = "Start date cannot be before today";
         return next(err)
-    };
+    }
 
     if (endDate <= startDate) {
         err.title = "Validation error";
         err.statusCode = 400;
-        err.message = "End date cannot be on or before Start date";
+        err.message = "End date cannot be on or before start Date";
         return next(err);
     };
 
+
+    /// Owner can't make booking on own spot
     if (user.id === spot.ownerId) {
-        err.title = "Owner can't make booking for own spot";
+        err.title = "Owner can't make booking for owned spot";
         err.status = 403;
         err.message = "Current user owns this spot";
         return next(err);
@@ -536,31 +540,23 @@ router.post('/:spotId/bookings', requireAuth, checkIfSpotExists, validateBooking
         err.status = 403;
         err.message = "Sorry, this spot is already booked for the specified dates";
 
-        bookedStartDate = convertDate(booking.startDate);
-        bookingEndDate = convertDate(booking.endDate);
+        bookedStartDate = new Date(booking.startDate);
+        bookedEndDate = new Date(booking.endDate);
 
-        if ((bookedStartDate <= startDate) && (bookedEndDate >= startDate)) {
+        if ((bookedStartDate <= startDate) && bookedEndDate >= startDate) {
             err.errors = [
-                { 
-                    startDate: "Start date conflicts with an existing booking" 
-                }
+                { startDate: "Start date conflicts with an existing booking" }
             ]
             return next(err);
-        } else if ((bookedStartDate <= endDate) && (endDate <= bookedEndDate)) {
+        } else if (((bookedStartDate <= endDate) && (endDate <= bookedEndDate))) {
             err.errors = [
-                {
-                    endDate: "End date conflicts with an existing booking"
-                }
+                { endDate: "End date conflicts with an existing booking" }
             ]
             return next(err);
         } else if ((bookedStartDate >= startDate) && (bookedEndDate <= endDate)) {
             err.errors = [
-                {
-                    startDate: "Start date conflicts with an existing booking"
-                },
-                {
-                    endDate: "End date conflicts with an existing booking"
-                }
+                { startDate: "Start date conflicts with an existing booking" },
+                { endDate: "End date conflicts with an existing booking" }
             ]
             return next(err);
         }
@@ -574,7 +570,7 @@ router.post('/:spotId/bookings', requireAuth, checkIfSpotExists, validateBooking
         })
         return res.json(newBooking)
     };
-});
+})
 
 
 module.exports = router;

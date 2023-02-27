@@ -3,6 +3,14 @@ const express = require('express');
 const router = express.Router();
 const { User, Spot, Review, SpotImage, ReviewImage, Booking } = require('../db/models');
 
+// Convert Date
+// const convertDate = (date) => {
+//     const [year, month, day] = date.split("-");
+//     const monthIndex = month -1;
+//     const newDate = newDate(year, monthIndex, date);
+//     return date;
+// }
+
 // Check If Spot Exists
 const checkIfSpotExists = async (req, res, next) => {
     let spot = await Spot.findByPk(req.params.spotId);
@@ -82,13 +90,6 @@ const checkIfBookingExists = async (req, res, next) => {
     return next()
 };
 
-// Convert Date
-const convertDate = (date) => {
-    const [year, month, day] = date.split("-");
-    const monthIndex = month -1;
-    const newDate = newDate(year, monthIndex, date);
-    return date;
-}
 
 
 
@@ -98,6 +99,5 @@ module.exports = {
     checkIfUsersSpot,
     checkIfUsersReview,
     checkIfReviewExists,
-    checkIfBookingExists,
-    convertDate
+    checkIfBookingExists
 }
