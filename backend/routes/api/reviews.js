@@ -103,7 +103,7 @@ router.post("/:reviewId/images", requireAuth, checkIfReviewExists, checkIfUsersR
 });
 
 // Edit a Review
-router.put('/:reviewId', requireAuth, checkIfUsersReview, checkIfReviewExists, validateReview, async (req, res, next) => {
+router.put('/:reviewId', requireAuth, checkIfReviewExists, checkIfUsersReview, validateReview, async (req, res, next) => {
     const { reviewId } = req.params;
     const user = req.user;
     const { review, stars } = req.body;
