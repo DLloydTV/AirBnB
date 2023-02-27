@@ -10,7 +10,7 @@ const sequelize = require('sequelize');
 const { Op, json } = require('sequelize');
 const { validateSpot, handleValidationErrors, validateSpotImage, validateReview, validateReviewImage, validateBooking } = require('../../utils/validation');
 
-const { checkIfSpotExists, checkIfUsersSpot, checkIfReviewExists, checkIfUsersReview, checkIfBookingExists, convertDate } = require('../../utils/error-handlers');
+const { checkIfSpotExists, checkIfUsersSpot, checkIfReviewExists, checkIfUsersReview, checkIfBookingExists } = require('../../utils/error-handlers');
 
 // Get all of the Current User's Bookings
 router.get('/current', requireAuth, async (req, res, next) => {
@@ -74,8 +74,8 @@ router.put('/:bookingId', requireAuth, checkIfBookingExists, validateBooking, as
     const user = req.user;
     let { startDate, endDate } = req.body;
 
-    startDate = convertDate(startDate);
-    endDate = convertDate(startDate);
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
 
     let editedBooking = await Booking.findByPk(bookingId);
 
@@ -87,8 +87,9 @@ router.put('/:bookingId', requireAuth, checkIfBookingExists, validateBooking, as
         return next(err);
     }
 
-    bookingStartDate = convertDate(editedBooking.startDate);
-    bookingEndDate = convertDate(editedBooking.endDate);
+    bookingStartDate = new Date(editedBooking.startDate);
+    bookingEndDate = new Date(editedBooking.endDate);
+
     const spotId = editedBooking.spotId;
 
     if (bookingEndDate < new Date()) {
@@ -122,8 +123,9 @@ router.put('/:bookingId', requireAuth, checkIfBookingExists, validateBooking, as
             err.status = 403;
             err.message = "Sorry, this spot is already booked for the specified dates";
 
-            bookedStartDate = convertDate(booking.startDate);
-            bookedEndDate = convertDate(booking.endDate);
+            bookedStartDate = new Date(booking.startDate);
+            bookedEndDate = new Date(booking.endDate);
+
 
             if ((bookedStartDate <= startDate) && (bookedEndDate >= startDate)) {
                 err.errors = [
