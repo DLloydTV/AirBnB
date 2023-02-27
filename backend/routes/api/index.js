@@ -19,21 +19,21 @@ router.use('/spot-images', spotImagesRouter);
 router.use('/review-images', reviewImagesRouter);
 
 
-router.post('/test', function(req, res) {
-    res.json({ requestBody: req.body });
-  });
+// router.post('/test', function(req, res) {
+//     res.json({ requestBody: req.body });
+//   });
 
-  const { setTokenCookie } = require('../../utils/auth.js');
-const { User } = require('../../db/models');
-router.get('/set-token-cookie', async (_req, res) => {
-  const user = await User.findOne({
-      where: {
-        username: 'DemoUser'
-      }
-    });
-  setTokenCookie(res, user);
-  return res.json({ user: user });
-});
+//   const { setTokenCookie } = require('../../utils/auth.js');
+// const { User } = require('../../db/models');
+// router.get('/set-token-cookie', async (_req, res) => {
+//   const user = await User.findOne({
+//       where: {
+//         username: 'DemoUser'
+//       }
+//     });
+//   setTokenCookie(res, user);
+//   return res.json({ user: user });
+// });
 
 // router.get(
 //   '/restore-user',
